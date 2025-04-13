@@ -1,0 +1,40 @@
+<% content_for :header do %>
+  <section class="hero is-warning">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Your Cart
+        </h1>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+<div class="keep-shopping pv1 mt4 has-text-right">
+  <%= link_to 'Keep Shopping', products_path, class: 'button is-warning' %>
+</div>
+
+<hr />
+
+<section class="section">
+  <%= render(@cart.line_items) %>
+
+  <div class="columns">
+    <div class="column">
+      <% if @cart.line_items.any? %>
+        <div class="total has-text-right">
+          <h4 class="title is-4">
+            Total: <%= number_to_currency(@cart.total_price) %>
+          </h4>
+        </div>
+      <% end %>
+    </div>
+    <div class="column">
+      <div class="has-text-right">
+        <% if @cart.line_items.any? %>
+          <%= button_to 'Empty Cart', @cart, method: :delete, data: { confirm: "Are you sure? " }, class: "button is-danger" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
