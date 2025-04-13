@@ -1,0 +1,34 @@
+<% content_for :header do %>
+  <section class="hero is-warning">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          All Carts
+        </h1>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+<div class="columns is-multiline">
+  <% @carts.each do |cart| %>
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4">Cart #<%= cart.id %></p>
+            </div>
+          </div>
+          <div class="content">
+            <p>Items: <%= cart.line_items.count %></p>
+          </div>
+          <div class="card-footer">
+            <%= link_to 'Show', cart, class: 'card-footer-item' %>
+            <%= link_to 'Destroy', cart, method: :delete, data: { confirm: 'Are you sure?' }, class: 'card-footer-item' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
