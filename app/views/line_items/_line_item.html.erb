@@ -1,29 +1,45 @@
-<div class="columns align-items-center">
-  <div class="column is-1">
+<!-- Enhanced line item partial -->
+<div class="cart-item">
+  <div class="item-quantity">
     <%= line_item.quantity %>
   </div>
-  <div class="column is-2">
-    <figure class="image is-64x64">
-      <% if line_item.product.image? %>
-        <%= image_tag(line_item.product.image_url(:thumb)) %>
-      <% else %>
-        <%= image_tag("https://placehold.co/400", alt: "No image available") %>
-      <% end %>
-    </figure>
+
+  <div class="item-image">
+    <% if line_item.product.image? %>
+      <%= image_tag(line_item.product.image_url(:thumb)) %>
+    <% else %>
+      <%= image_tag("https://placehold.co/400", alt: "No image available") %>
+    <% end %>
   </div>
-  <div class="column is-9">
-    <strong><%= line_item.product.title %></strong>
-    <div class="columns align-items-center">
-      <div class="content column is-9">
-        <%= truncate(line_item.product.description, length: 140) %>
-      </div>
-      <div class="column is-3 has-text-right">
-        <strong class="f4"><%= number_to_currency(line_item.total_price) %></strong>
-      </div>
-    </div>
-    <div class="has-text-right">
-      <%= link_to 'Remove Item', line_item, method: :delete, data: { confirm: "Are you sure? " }, class: "button is-small mb4" %>
-    </div>
+
+  <div class="item-details">
+    <h3 class="item-title"><%= line_item.product.title %></h3>
+    <p class="item-description">
+      <% if line_item.product.brand? %>
+        <span class="tag is-light mr-1"><%= line_item.product.brand %></span>
+      <% end %>
+      <% if line_item.product.model? %>
+        <span class="tag is-light mr-1"><%= line_item.product.model %></span>
+      <% end %>
+      <% if line_item.product.condition? %>
+        <span class="tag is-light"><%= line_item.product.condition %></span>
+      <% end %>
+    </p>
+    <p class="item-seller mt-2">
+      <small class="has-text-grey">
+        <i class="fas fa-user mr-1"></i> Sold by: <%= line_item.product.user.name if line_item.product.user %>
+      </small>
+    </p>
+  </div>
+
+  <div class="item-price">
+    <%= number_to_currency(line_item.total_price) %>
+  </div>
+
+  <div class="item-remove">
+    <%= link_to line_item, method: :delete, data: { confirm: "Remove this item from your cart?" }, class: "button is-small" do %>
+      <i class="fas fa-trash"></i>
+    <% end %>
   </div>
 </div>
 

@@ -1,40 +1,112 @@
 <% content_for :header do %>
-  <section class="hero is-warning">
+  <section class="hero is-primary">
     <div class="hero-body">
       <div class="container">
-        <h1 class="title">
-          Your Cart
+        <h1 class="title is-2">
+          <i class="fas fa-shopping-cart mr-3"></i> Your Shopping Cart
         </h1>
+        <p class="subtitle">
+          Review and manage your selected items
+        </p>
       </div>
     </div>
   </section>
 <% end %>
 
-<div class="keep-shopping pv1 mt4 has-text-right">
-  <%= link_to 'Keep Shopping', products_path, class: 'button is-warning' %>
-</div>
+<div class="section">
+  <div class="keep-shopping mb-5 has-text-right">
+    <%= link_to products_path, class: "button is-light" do %>
+      <i class="fas fa-chevron-left mr-2"></i> Continue Shopping
+    <% end %>
+  </div>
 
-<hr />
+  <% if @cart.line_items.any? %>
+    <div class="shopping-cart">
+      <div class="cart-header">
+        <h2 class="title is-4">
+          <span class="has-text-primary">
+            <i class="fas fa-shopping-basket mr-2"></i>
+          </span>
+          Cart Items (<%= @cart.line_items.sum(:quantity) %>)
+        </h2>
+      </div>
 
-<section class="section">
-  <%= render(@cart.line_items) %>
+      <% @cart.line_items.each do |item| %>
+        <div class="cart-item">
+          <div class="item-quantity">
+            <%= item.quantity %>
+          </div>
 
-  <div class="columns">
-    <div class="column">
-      <% if @cart.line_items.any? %>
-        <div class="total has-text-right">
-          <h4 class="title is-4">
-            Total: <%= number_to_currency(@cart.total_price) %>
-          </h4>
+          <div class="item-image">
+            <% if item.product.image? %>
+              <%= image_tag(item.product.image_url(:thumb)) %>
+            <% else %>
+              <%= image_tag("https://placehold.co/400", alt: "No image available") %>
+            <% end %>
+          </div>
+
+          <div class="item-details">
+            <h3 class="item-title"><%= item.product.title %></h3>
+            <p class="item-description">
+              <% if item.product.brand? %>
+                <span class="tag is-light mr-1"><%= item.product.brand %></span>
+              <% end %>
+              <% if item.product.model? %>
+                <span class="tag is-light mr-1"><%= item.product.model %></span>
+              <% end %>
+              <% if item.product.condition? %>
+                <span class="tag is-light"><%= item.product.condition %></span>
+              <% end %>
+            </p>
+            <p class="item-seller mt-2">
+              <small class="has-text-grey">
+                <i class="fas fa-user mr-1"></i> Sold by: <%= item.product.user.name if item.product.user %>
+              </small>
+            </p>
+          </div>
+
+          <div class="item-price">
+            <%= number_to_currency(item.total_price) %>
+          </div>
+
+          <div class="item-remove">
+            <%= link_to item, method: :delete, data: { confirm: "Remove this item from your cart?" }, class: "button is-small" do %>
+              <i class="fas fa-trash"></i>
+            <% end %>
+          </div>
         </div>
       <% end %>
+
+      <div class="cart-footer">
+        <div class="total">
+          Total: <span class="amount"><%= number_to_currency(@cart.total_price) %></span>
+        </div>
+
+        <div class="actions">
+          <%= button_to @cart, method: :delete, data: { confirm: "Are you sure you want to empty your cart?" }, class: "button is-danger" do %>
+            <i class="fas fa-trash-alt mr-2"></i> Empty Cart
+          <% end %>
+
+          <button class="button is-warning">
+            <i class="fas fa-credit-card mr-2"></i> Checkout
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="column">
-      <div class="has-text-right">
-        <% if @cart.line_items.any? %>
-          <%= button_to 'Empty Cart', @cart, method: :delete, data: { confirm: "Are you sure? " }, class: "button is-danger" %>
+  <% else %>
+    <div class="shopping-cart">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <h2 class="title is-4">Your Cart is Empty</h2>
+        <p class="subtitle is-6 has-text-grey">
+          Looks like you haven't added any products to your cart yet.
+        </p>
+        <%= link_to products_path, class: "button is-warning" do %>
+          <i class="fas fa-shopping-bag mr-2"></i> Start Shopping
         <% end %>
       </div>
     </div>
-  </div>
-</section>
+  <% end %>
+</div>

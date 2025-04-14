@@ -1,96 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shop</title>
+  <title>Modern Shop</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
   <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <%= javascript_include_tag 'custom', 'data-turbolinks-track': 'reload' %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body class="<%= yield (:body_class) %>">
 <% if flash[:notice] %>
   <div class="notification is-success global-notification">
+    <button class="delete"></button>
     <p class="notice"><%= notice %></p>
   </div>
 <% end %>
 <% if flash[:alert] %>
   <div class="notification is-danger global-notification">
+    <button class="delete"></button>
     <p class="alert"><%= alert %></p>
   </div>
 <% end %>
-<nav class="navbar is-warning" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <%= link_to root_path, class:"navbar-item" do %>
-      <h1 class="title is-5">Shop</h1>
-    <% end  %>
-    <div class="navbar-burger burger" data-target="navbar">
-      <span></span>
-      <span></span>
-      <span></span>
+
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+  <div class="container">
+    <div class="navbar-brand">
+      <%= link_to root_path, class:"navbar-item" do %>
+        <div class="logo">
+          <i class="fas fa-store mr-2"></i>
+          <h1 class="title is-5 has-text-white">ModernShop</h1>
+        </div>
+      <% end %>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
     </div>
-  </div>
 
-  <div id="navbar" class="navbar-menu">
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="field is-grouped">
-
-          <% if user_signed_in? %>
-            <%= link_to 'Sell', new_product_path, class: "navbar-item button is-dark" %>
-
-            <!-- Cart Icon with Item Count -->
-            <% if @cart && @cart.line_items.count > 0 %>
-              <%= link_to cart_path(@cart), class: "navbar-item button is-warning" do %>
-                  <span class="icon">
-                    <i class="fas fa-shopping-cart"></i>
-                  </span>
-                <span><%= @cart.line_items.sum(:quantity) %></span>
-              <% end %>
-            <% else %>
-              <%= link_to cart_path(session[:cart_id] || 0), class: "navbar-item button is-warning" do %>
-                  <span class="icon">
-                    <i class="fas fa-shopping-cart"></i>
-                  </span>
-                <span>0</span>
-              <% end %>
-            <% end %>
-
-            <div class="navbar-item has-dropdown is-hoverable">
-              <%= link_to 'Account', edit_user_registration_path, class: "navbar-link" %>
-              <div class="navbar-dropdown is-right">
-                <%= link_to current_user.name, edit_user_registration_path, class:"navbar-item" %>
-                <%= link_to "Log Out", destroy_user_session_path, method: :delete, class:"navbar-item" %>
-              </div>
-            </div>
-          <% else %>
-
-            <!-- Cart Icon for Guest Users -->
-            <% if @cart && @cart.line_items.count > 0 %>
-              <%= link_to cart_path(@cart), class: "navbar-item button is-warning" do %>
-                <span class="icon">
-                  <i class="fas fa-shopping-cart"></i>
-                </span>
-                <span><%= @cart.line_items.sum(:quantity) %></span>
-              <% end %>
-            <% else %>
-              <%= link_to cart_path(session[:cart_id] || 0), class: "navbar-item button is-warning" do %>
-                <span class="icon">
-                  <i class="fas fa-shopping-cart"></i>
-                </span>
-                <span>0</span>
-              <% end %>
-            <% end %>
-
-            <%= link_to "Sign In", new_user_session_path, class:"navbar-item button is-warning" %>
-            <%= link_to "Sign up", new_user_registration_path, class:"navbar-item button is-warning"%>
-
+    <div id="navbar" class="navbar-menu">
+      <div class="navbar-end">
+        <% if user_signed_in? %>
+          <%= link_to new_product_path, class: "navbar-item" do %>
+            <i class="fas fa-plus-circle mr-2"></i> Sell
           <% end %>
 
-        </div>
+          <!-- Cart Icon with Item Count -->
+          <% if @cart && @cart.line_items.count > 0 %>
+            <%= link_to cart_path(@cart), class: "navbar-item cart-button" do %>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count"><%= @cart.line_items.sum(:quantity) %></span>
+            <% end %>
+          <% else %>
+            <%= link_to cart_path(session[:cart_id] || 0), class: "navbar-item cart-button" do %>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            <% end %>
+          <% end %>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <i class="fas fa-user-circle mr-2"></i>
+              <%= current_user.name %>
+            </a>
+            <div class="navbar-dropdown is-right">
+              <%= link_to edit_user_registration_path, class:"navbar-item" do %>
+                <i class="fas fa-user-edit mr-2"></i> Edit Profile
+              <% end %>
+              <hr class="navbar-divider">
+              <%= link_to destroy_user_session_path, method: :delete, class:"navbar-item" do %>
+                <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <!-- Cart Icon for Guest Users -->
+          <% if @cart && @cart.line_items.count > 0 %>
+            <%= link_to cart_path(@cart), class: "navbar-item cart-button" do %>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count"><%= @cart.line_items.sum(:quantity) %></span>
+            <% end %>
+          <% else %>
+            <%= link_to cart_path(session[:cart_id] || 0), class: "navbar-item cart-button" do %>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            <% end %>
+          <% end %>
+
+          <div class="navbar-item">
+            <div class="buttons">
+              <%= link_to new_user_session_path, class: "button is-light" do %>
+                <i class="fas fa-sign-in-alt mr-2"></i> Sign In
+              <% end %>
+              <%= link_to new_user_registration_path, class: "button is-warning" do %>
+                <i class="fas fa-user-plus mr-2"></i> Sign Up
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -98,11 +114,85 @@
 
 <%= yield(:header) %>
 
-<div class="container">
-
-  <%= yield %>
-
+<div class="main-content">
+  <div class="container">
+    <%= yield %>
+  </div>
 </div>
 
+<footer class="footer mt-6">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-4">
+        <h3 class="title is-5 mb-4">
+          <i class="fas fa-store mr-2"></i> ModernShop
+        </h3>
+        <p class="has-text-grey">Your one-stop shop for quality products at great prices. Buy and sell with confidence.</p>
+      </div>
+      <div class="column is-2 is-offset-1">
+        <h4 class="title is-6 mb-4">Shop</h4>
+        <ul>
+          <li><%= link_to "Home", root_path, class: "has-text-grey" %></li>
+          <li><%= link_to "Products", products_path, class: "has-text-grey" %></li>
+          <li><%= link_to "Sell", new_product_path, class: "has-text-grey" %></li>
+        </ul>
+      </div>
+      <div class="column is-2">
+        <h4 class="title is-6 mb-4">Account</h4>
+        <ul>
+          <% if user_signed_in? %>
+            <li><%= link_to "Profile", edit_user_registration_path, class: "has-text-grey" %></li>
+            <li><%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "has-text-grey" %></li>
+          <% else %>
+            <li><%= link_to "Sign In", new_user_session_path, class: "has-text-grey" %></li>
+            <li><%= link_to "Sign Up", new_user_registration_path, class: "has-text-grey" %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="column is-2">
+        <h4 class="title is-6 mb-4">Help</h4>
+        <ul>
+          <li><a href="#" class="has-text-grey">FAQ</a></li>
+          <li><a href="#" class="has-text-grey">Contact Us</a></li>
+          <li><a href="#" class="has-text-grey">Terms</a></li>
+          <li><a href="#" class="has-text-grey">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="mt-5 mb-5">
+    <div class="columns">
+      <div class="column">
+        <p class="has-text-grey has-text-centered">
+          &copy; <%= Date.today.year %> ModernShop. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+    // Handle navbar burger menu for mobile
+    document.addEventListener('DOMContentLoaded', () => {
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        if ($navbarBurgers.length > 0) {
+            $navbarBurgers.forEach(el => {
+                el.addEventListener('click', () => {
+                    const target = el.dataset.target;
+                    const $target = document.getElementById(target);
+                    el.classList.toggle('is-active');
+                    $target.classList.toggle('is-active');
+                });
+            });
+        }
+
+        // Handle notification close button
+        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+            const $notification = $delete.parentNode;
+            $delete.addEventListener('click', () => {
+                $notification.style.display = 'none';
+            });
+        });
+    });
+</script>
 </body>
 </html>
