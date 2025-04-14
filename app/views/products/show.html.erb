@@ -18,7 +18,11 @@
       </ul>
 
       <div class="feature-image">
-        <%= image_tag(@product.image_url(:default)) if @product.image? %>
+        <% if @product.image? %>
+          <%= image_tag(@product.image_url(:default)) %>
+        <% else %>
+          <%= image_tag("https://placehold.co/400", alt: "No image available") %>
+        <% end %>
       </div>
 
       <div class="content pa4 mt3 bg-white border-radius-3">

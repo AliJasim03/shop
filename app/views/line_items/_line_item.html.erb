@@ -4,7 +4,11 @@
   </div>
   <div class="column is-2">
     <figure class="image is-64x64">
-      <%= image_tag(line_item.product.image_url(:thumb)) if line_item.product.image? %>
+      <% if line_item.product.image? %>
+        <%= image_tag(line_item.product.image_url(:thumb)) %>
+      <% else %>
+        <%= image_tag("https://placehold.co/400", alt: "No image available") %>
+      <% end %>
     </figure>
   </div>
   <div class="column is-9">
