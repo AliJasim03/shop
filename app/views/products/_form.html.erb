@@ -3,103 +3,198 @@
 
     <%= simple_form_for @product, html: { multipart: true } do |f| %>
       <%= f.error_notification %>
-
-        <div class="columns">
-
-          <div class="field column is-9">
-            <div class="control">
-              <%= f.input :title , required: true, input_html: { class: "input"}, wrapper: false, label_html: { class:"label" } %>
-            </div>
-          </div>
-
-          <div class="field column">
-            <div class="control">
-              <%= f.input :price, required: true, input_html: { class:"input", maxlength: 7  }, wrapper: false, label_html: { class:"label" } %>
-            </div>
-          </div>
-
+      <% if @product.errors.any? %>
+        <div class="notification is-danger">
+          <h2><%= pluralize(@product.errors.count, "error") %> prohibited this product from being saved:</h2>
+          <ul>
+            <% @product.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
         </div>
-
-        <div class="field">
-          <div class="control">
-            <%= f.input :model, required: true, input_html: { class:"input" }, wrapper: false, label_html: { class:"label" } %>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="control">
-            <%= f.input :description, required: true, input_html: { class:"textarea" }, wrapper: false, label_html: { class:"label" } %>
-          </div>
-        </div>
-
-        <div class="columns">
-          <div class="field column is-4">
-            <div class="control">
-              <label class="label">Brand</label>
-              <div class="control has-icons-left">
-                <span class="select">
-                  <%= f.input_field :brand, collection: Product::BRAND, prompt: "Select brand" %>
-                </span>
-                <span class="icon is-small is-left">
-                  <i class="fa fa-tag"></i>
-                </span>
-              </div>
-            </div>
-           </div>
-
-          <div class="field column is-4">
-            <div class="control">
-              <label class="label">Finish</label>
-              <div class="control has-icons-left">
-                <span class="select">
-                  <%= f.input_field :finish, collection: Product::FINISH, prompt: "Select finish" %>
-                </span>
-                <span class="icon is-small is-left">
-                  <i class="fa fa-paint-brush"></i>
-                </span>
-              </div>
-            </div>
-           </div>
-
-          <div class="field column is-4">
-            <div class="control">
-              <label class="label">Condition</label>
-              <div class="control has-icons-left">
-                <span class="select">
-                  <%= f.input_field :condition, collection: Product::CONDITION, prompt: "Select condition" %>
-                </span>
-                <span class="icon is-small is-left">
-                  <i class="fa fa-paint-brush"></i>
-                </span>
-              </div>
-            </div>
-           </div>
-         </div>
-
-        <div class="field">
-          <div class="control">
-            <label class="label">Add images</label>
-              <div class="file">
-              <label class="file-label">
-                <%= f.input :image, as: :file, input_html: { class:"file-input product-image" }, label: false, wrapper: false %>
-                  <span class="file-cta">
-                    <span class="file-icon"><i class="fa fa-upload"></i></span>
-                    <span class="file-label">Choose a file…</span>
-                  </span>
-              </label>
-              </div>
-            </div>
-          </div>
-          <output id="list"></output>
-        <hr />
-
-        <div class="field is-grouped">
-          <div class="control">
-            <%= f.button :submit, class: 'button is-warning' %>
-            <%= link_to 'Cancel', products_path, class:'button is-light' %>
-          </div>
-        </div>
-
       <% end %>
+
+      <div class="columns">
+        <div class="field column is-9">
+          <div class="control">
+            <%= f.input :title, required: true, input_html: { class: "input"}, wrapper: false, label_html: { class:"label" } %>
+          </div>
+        </div>
+
+        <div class="field column">
+          <div class="control">
+            <%= f.input :price, required: true, input_html: { class:"input", maxlength: 7 }, wrapper: false, label_html: { class:"label" } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :model, required: true, input_html: { class:"input" }, wrapper: false, label_html: { class:"label" } %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :description, required: true, input_html: { class:"textarea" }, wrapper: false, label_html: { class:"label" } %>
+        </div>
+      </div>
+
+      <div class="columns">
+        <div class="field column is-4">
+          <div class="control">
+            <label class="label">Brand <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+              <span class="select <%= 'is-danger' if @product.errors[:brand].any? %>">
+                <%= f.input_field :brand, collection: Product::BRAND, prompt: "Select brand", required: true %>
+              </span>
+              <span class="icon is-small is-left">
+                <i class="fa fa-tag"></i>
+              </span>
+            </div>
+            <% if @product.errors[:brand].any? %>
+              <p class="help is-danger"><%= @product.errors[:brand].join(', ') %></p>
+            <% else %>
+              <p class="help has-text-danger brand-error" style="display: none;">Please select a brand</p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field column is-4">
+          <div class="control">
+            <label class="label">Finish <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+              <span class="select <%= 'is-danger' if @product.errors[:finish].any? %>">
+                <%= f.input_field :finish, collection: Product::FINISH, prompt: "Select finish", required: true %>
+              </span>
+              <span class="icon is-small is-left">
+                <i class="fa fa-paint-brush"></i>
+              </span>
+            </div>
+            <% if @product.errors[:finish].any? %>
+              <p class="help is-danger"><%= @product.errors[:finish].join(', ') %></p>
+            <% else %>
+              <p class="help has-text-danger finish-error" style="display: none;">Please select a finish</p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field column is-4">
+          <div class="control">
+            <label class="label">Condition <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+              <span class="select <%= 'is-danger' if @product.errors[:condition].any? %>">
+                <%= f.input_field :condition, collection: Product::CONDITION, prompt: "Select condition", required: true %>
+              </span>
+              <span class="icon is-small is-left">
+                <i class="fa fa-paint-brush"></i>
+              </span>
+            </div>
+            <% if @product.errors[:condition].any? %>
+              <p class="help is-danger"><%= @product.errors[:condition].join(', ') %></p>
+            <% else %>
+              <p class="help has-text-danger condition-error" style="display: none;">Please select a condition</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <label class="label">Add images</label>
+          <div class="file">
+            <label class="file-label">
+              <%= f.input :image, as: :file, input_html: { class:"file-input product-image" }, label: false, wrapper: false %>
+              <span class="file-cta">
+                <span class="file-icon"><i class="fa fa-upload"></i></span>
+                <span class="file-label">Choose a file…</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <output id="list"></output>
+      <hr />
+
+      <div class="field is-grouped">
+        <div class="control">
+          <%= f.button :submit, class: 'button is-warning product-submit' %>
+          <%= link_to 'Cancel', products_path, class:'button is-light' %>
+        </div>
+      </div>
+
+    <% end %>
   </div>
 </div>
+
+<script>
+    document.addEventListener('turbolinks:load', function() {
+        // Get the form element
+        const productForm = document.querySelector('form.simple_form.product');
+        if (!productForm) return;
+
+        // Add form submission validation
+        productForm.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Check brand
+            const brandSelect = document.querySelector('select#product_brand');
+            if (brandSelect && !brandSelect.value) {
+                isValid = false;
+                document.querySelector('.brand-error').style.display = 'block';
+                brandSelect.closest('.select').classList.add('is-danger');
+            } else if (brandSelect) {
+                const brandError = document.querySelector('.brand-error');
+                if (brandError) brandError.style.display = 'none';
+                brandSelect.closest('.select').classList.remove('is-danger');
+            }
+
+            // Check finish
+            const finishSelect = document.querySelector('select#product_finish');
+            if (finishSelect && !finishSelect.value) {
+                isValid = false;
+                document.querySelector('.finish-error').style.display = 'block';
+                finishSelect.closest('.select').classList.add('is-danger');
+            } else if (finishSelect) {
+                const finishError = document.querySelector('.finish-error');
+                if (finishError) finishError.style.display = 'none';
+                finishSelect.closest('.select').classList.remove('is-danger');
+            }
+
+            // Check condition
+            const conditionSelect = document.querySelector('select#product_condition');
+            if (conditionSelect && !conditionSelect.value) {
+                isValid = false;
+                document.querySelector('.condition-error').style.display = 'block';
+                conditionSelect.closest('.select').classList.add('is-danger');
+            } else if (conditionSelect) {
+                const conditionError = document.querySelector('.condition-error');
+                if (conditionError) conditionError.style.display = 'none';
+                conditionSelect.closest('.select').classList.remove('is-danger');
+            }
+
+            // If not valid, prevent form submission
+            if (!isValid) {
+                event.preventDefault();
+                // Scroll to the first error
+                const firstError = document.querySelector('.is-danger');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        // Add change event listeners to hide error messages when user selects an option
+        const selectElements = document.querySelectorAll('select#product_brand, select#product_finish, select#product_condition');
+        selectElements.forEach(function(select) {
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    this.closest('.select').classList.remove('is-danger');
+                    const field = this.id.split('_')[1]; // Extract field name (brand, finish, condition)
+                    const errorElement = document.querySelector('.' + field + '-error');
+                    if (errorElement) errorElement.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>

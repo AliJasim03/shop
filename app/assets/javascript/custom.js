@@ -35,12 +35,15 @@ document.addEventListener("turbolinks:load", function() {
         });
     }
 
-    // Enhanced product image handling
+    // Enhanced product image handling - only attach if products.js hasn't already done so
     const productImage = document.querySelector('.product-image');
+    // We'll only add our preview functionality if there's no existing handler
+    if (productImage && !window.productImageHandlerAttached) {
+        // Mark that we've attached a handler to prevent duplicates
+        window.productImageHandlerAttached = true;
 
-    if (productImage) {
         // Existing image preview functionality
-        this.addEventListener('change', handleFileSelect, false);
+        productImage.addEventListener('change', handleCustomFileSelect, false);
 
         // Enhanced preview styling
         const previewContainer = document.getElementById('list');
@@ -72,20 +75,6 @@ document.addEventListener("turbolinks:load", function() {
         });
     }
 
-    // Mobile menu handling
-    const navbarBurgers = document.querySelectorAll('.navbar-burger');
-
-    if (navbarBurgers.length > 0) {
-        navbarBurgers.forEach(el => {
-            el.addEventListener('click', () => {
-                const target = el.dataset.target;
-                const $target = document.getElementById(target);
-
-                el.classList.toggle('is-active');
-                $target.classList.toggle('is-active');
-            });
-        });
-    }
 
     // Sticky sidebar on product page
     const sidebar = document.querySelector('.product-sidebar');
@@ -145,12 +134,12 @@ function fadeOut(element) {
     }, 50);
 }
 
-// Product image file selection handler
-function handleFileSelect(evt) {
+// Renamed function to avoid conflicts with products.js
+function handleCustomFileSelect(evt) {
     const files = evt.target.files;
     const list = document.getElementById('list');
 
-    if (!list) return;
+    if (!list || !files || !files.length) return;
 
     // Clear previous previews
     list.innerHTML = '';
