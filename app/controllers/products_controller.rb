@@ -1,4 +1,7 @@
 class ProductsController < ApplicationController
+  # Add this line to handle missing products
+  rescue_from ActiveRecord::RecordNotFound, with: :invalid_product
+
   before_action :set_product, only: [:show, :edit, :update, :destroy]
 
   before_action :authenticate_user!, except: [:index, :show]
@@ -82,5 +85,11 @@ class ProductsController < ApplicationController
     unless @product.user == current_user
       redirect_to products_path, alert: "You are not authorized to perform this action."
     end
+  end
+
+  # Handle invalid product IDs (similar to invalid_cart in CartsController)
+  def invalid_product
+    logger.error "Attempt to access invalid product #{params[:id]}"
+    redirect_to products_path, notice: "That product doesn't exist"
   end
 end
